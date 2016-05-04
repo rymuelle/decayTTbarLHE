@@ -5,8 +5,10 @@ Code to decay the products of one LHE file by adding in events from a second and
 Must be contained within a CMSSW/src folder (I used 7_6_5)!
 
     cmsrel CMSSW_7_6_5
-    cd CMSSW_7_6_5/src/decayTTbarLHE
+    cd CMSSW_7_6_5/src/
     cmsenv
+    git clone https://github.com/rymuelle/decayTTbarLHE.git
+    cd decayTTbarLHE
 
 
 Compile with:
