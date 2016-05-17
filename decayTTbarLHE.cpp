@@ -62,7 +62,8 @@ int main(int argc, char ** argv)
 
                 if(reader2.readEvent())
                 {
-                       reader.hepeup.addHEPUP(reader2.hepeup, boost.BoostVector());
+                       reader.hepeup.addHEPUP(reader2.hepeup, boost.BoostVector(), iPart);
+                        std::cout << iPart << std::endl;
                 }
 
             }
@@ -72,10 +73,11 @@ int main(int argc, char ** argv)
                 reader.hepeup.ISTUP.at (iPart) = 2;
                 if(reader2.readEvent())
                 {
-                       reader.hepeup.addHEPUP(reader2.hepeup, boost.BoostVector());
+                       reader.hepeup.addHEPUP(reader2.hepeup, boost.BoostVector(), iPart);
+                        std::cout << iPart << std::endl;
                 }
             }
-
+            
 
 
             //std::cout << reader.hepeup.IDUP.size() << std::endl;            

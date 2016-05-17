@@ -2006,40 +2006,114 @@ public:
 
   }
 
-  void addHEPUP(const HEPEUP & x, TVector3 b)
+  void addHEPUP(const HEPEUP & x, TVector3 b, int index_decayed_particle)
   {
+    int clustering_size = clustering.size();
+    int clustering_size_x = x.clustering.size();
     int index = NUP - 1;
+    //clustering_size = clustering_size + x.clustering.size();
+    //clustering.resize(clustering_size); 
+    //clustering.resize(NUP);  
+    //TLorentzVector boost;
+    
+    //clustering
+    clustering.resize(clustering_size + clustering_size_x); 
+
+    //push back original cluster 
+    for ( int i = clustering_size + clustering_size_x - 1 ; i > clustering_size_x - 1; i--)
+    {
+        clustering[i].p1 = clustering[i - clustering_size_x].p1;
+        clustering[i].p2 = clustering[i - clustering_size_x].p2;
+        clustering[i].p0 = clustering[i - clustering_size_x].p0;
+        clustering[i].scale = clustering[i - clustering_size_x].scale;
+        clustering[i].alphas = clustering[i - clustering_size_x].alphas;
+    }
+
+    // add in clus scales from decay products
+    for ( int i = 0; i < clustering_size_x; i++)
+    {
+        clustering[i].p1 = x.clustering[i].p1 + NUP - 1;
+        clustering[i].p2 = x.clustering[i].p2 + NUP - 1;
+        clustering[i].p0 = x.clustering[i].p0 + NUP - 1;
+
+        if(x.clustering[i].p1 == -1)
+        {
+            clustering[i].p1 = -1;
+        }
+
+        if(x.clustering[i].p2 == -1)
+        {
+            clustering[i].p2 = -1;
+        }
+
+        if(x.clustering[i].p0 == -1)
+        {
+            clustering[i].p0 = -1;
+        }
+
+        if(x.clustering[i].p1 == 1)
+        {
+            clustering[i].p1 = index_decayed_particle + 1;
+        }
+
+        if(x.clustering[i].p2 == 1)
+        {
+            clustering[i].p2 = index_decayed_particle + 1;
+        }
+
+        if(x.clustering[i].p0 == 1)
+        {
+            clustering[i].p0 = index_decayed_particle;
+        }
+
+//        clustering[i].p1 = x.clustering[i].p1 + NUP - x.NUP;
+//        clustering[i].p2 = x.clustering[i].p2 + NUP - x.NUP;
+//        clustering[i].p0 = x.clustering[i].p0 + NUP - x.NUP;
+        clustering[i].scale = x.clustering[i].scale;
+        clustering[i].alphas = x.clustering[i].alphas;
+    } 
+
+    
+
     NUP =  NUP + x.NUP - 1;
     resize();
     
-    //TLorentzVector boost;
-
-        TLorentzVector boost (0,0,0,0) ;
+    TLorentzVector boost (0,0,0,0) ;
 
     for ( int i = 0; i < x.NUP; i++)
     {
+
+    //std::cout << "index: " << i << "clustering: " << x.clustering[i].p1 << " " << x.clustering[i].p2 << " " << x.clustering[i].p0 << " " << x.clustering[i].scale << " " << x.clustering[i].alphas <<  std::endl;
 
         if( x.ISTUP[i] != -1)
         {
         boost.SetPxPyPzE(x.PUP[i][0],x.PUP[i][1],x.PUP[i][2],x.PUP[i][3]);
         boost.Boost(b);
+             
+        index = index + 1;
+        //clustering.push_back(clustering[index]);
+//        if( 1==1){// clustering[index].p1 <= NUP){
+//            clustering[index].p1 = x.clustering[i].p1;    
+//            clustering[index].p2 = x.clustering[i].p2;    
+//            clustering[index].p0 = x.clustering[i].p0;       
+//            clustering[index].scale = x.clustering[i].scale;       
+//            clustering[index].alphas = x.clustering[i].alphas;       
+//        }
 
-       //     std::cout << "clustering: " << x.clustering[i].p1 << " " << x.clustering[i].p2 << " " << x.clustering[i].p0 << " " << x.clustering[i].scale << " " << x.clustering[i].alphas <<  std::endl;
-            index = index + 1;
-            //std::cout << index << std<<endl;
-            IDUP[index] = x.IDUP[i];
-            ISTUP[index] = x.ISTUP[i];
-            MOTHUP[index].first = x.MOTHUP[i].first;
-            MOTHUP[index].second = x.MOTHUP[i].second;
-            ICOLUP[index].first = x.ICOLUP[i].first;
-            ICOLUP[index].second = x.ICOLUP[i].second;
-            PUP[index][0] = boost.Px();
-            PUP[index][1] = boost.Py();
-            PUP[index][2] = boost.Pz();
-            PUP[index][3] = boost.E();
-            PUP[index][4] = x.PUP[i][4];
-            VTIMUP[index] = x.VTIMUP[i];
-            SPINUP[index] = x.SPINUP[i];
+        //std::cout << index << std<<endl;
+        IDUP[index] = x.IDUP[i];
+        ISTUP[index] = x.ISTUP[i];
+        MOTHUP[index].first = x.MOTHUP[i].first;
+        MOTHUP[index].second = x.MOTHUP[i].second;
+        ICOLUP[index].first = x.ICOLUP[i].first;
+        ICOLUP[index].second = x.ICOLUP[i].second;
+        PUP[index][0] = boost.Px();
+        PUP[index][1] = boost.Py();
+        PUP[index][2] = boost.Pz();
+        PUP[index][3] = boost.E();
+        PUP[index][4] = x.PUP[i][4];
+        VTIMUP[index] = x.VTIMUP[i];
+        SPINUP[index] = x.SPINUP[i];
         }
     }
   }  
